@@ -1,0 +1,178 @@
+$(document).ready(function () {
+
+    var table
+    $('.select2').select2()
+    get_list()
+
+    function init_datatable() {
+
+        table = $('#table_data').DataTable({
+            "dom": "<'row'<'col-md-5 col-12'l><'col-md-7 col-12'f>r><'table-responsive't><'row'<'col-md-5 col-12'i><'col-md-7 col-12'p>>",
+            "order": [[ 0, "desc" ]]
+        })
+
+        $(".dataTables_wrapper").removeClass("form-inline")
+        $(".dataTables_paginate .pagination").addClass("float-right")
+
+    }
+
+    function destroy_datatable() {
+
+        table.destroy()
+
+    }
+
+    // Populate data table
+    function get_list() {
+
+        // AJAX START HERE
+        jQuery.ajax({
+            url: '/mbcadmin/{{ database_table_name }}/index',
+            method: 'GET',
+            timeout: 15000,
+            success: function(data){
+                if(data.success == true)
+                {  
+                    $('#table_data').html(data.html_response)
+                    init_datatable()
+                }
+                else
+                {
+                    console.log('Couldnt get relevant information.')
+                }
+
+            },
+            error: function(jqXHR,exception)
+            {
+                //alert(xhr + "\n" + textStatus + "\n" + thrownError)
+                if (jqXHR.status === 0) {
+                    alert("Couldnt get relevant information due to a Problem.\nConnection Interrupted.\nConnection cancelled or request Timeout")
+                } else if (jqXHR.status == 404) {
+                    alert("Couldnt get relevant information due to a Problem.\nRequested page not found. [404]")
+                } else if (jqXHR.status == 500) {
+                    alert("Couldnt get relevant information due to a Problem.\nInternal Server Error [500].\n" + jqXHR.responseText)
+                } else if (exception === 'parsererror') {
+                    alert("Couldnt get relevant information due to a Problem.\nRequested JSON parse failed.")
+                } else if (exception === 'timeout') {
+                    alert("Couldnt get relevant information due to a Problem.\nTime out Error.")
+                } else if (exception === 'abort') {
+                    alert('Ajax request aborted.')
+                } else {
+                    alert("Couldnt get relevant information due to a Problem.\nUncaught Error.n" + jqXHR.responseText)
+                }
+            }
+
+        })
+        // AJAX END HERE
+
+    }
+
+    // Verify for deleting an entry
+    $(document).on('click', "button[name='show_delete_entry_modal']", function(e) {
+        let id = $(this).data('id')
+        $('#delete_entry_id').val(id)
+        $('#delete-entry-verify').modal('show')
+    })
+
+    // Show edit information modal with relevant pre-populated data
+    $(document).on('click', "button[name='show_edit_information_modal']", function (e) {
+        let href = $(this).data('href')
+
+        // AJAX START HERE
+        jQuery.ajax({
+            url:href,
+            method:'GET',
+            timeout:15000,
+            success: function(data){
+                if(data.success == true)
+                {  
+                    $('#information_inner_form').html(data.html_response)
+                    $('.select2').select2()
+                    $('#edit_information_modal').modal('show')
+                }
+                else
+                {
+                    console.log('Couldnt get relevant information.')
+                }
+
+            },
+            error: function(jqXHR,exception)
+            {
+                //alert(xhr + "\n" + textStatus + "\n" + thrownError)
+                if (jqXHR.status === 0) {
+                    alert("Couldnt get relevant information due to a Problem.\nConnection Interrupted.\nConnection cancelled or request Timeout")
+                } else if (jqXHR.status == 404) {
+                    alert("Couldnt get relevant information due to a Problem.\nRequested page not found. [404]")
+                } else if (jqXHR.status == 500) {
+                    alert("Couldnt get relevant information due to a Problem.\nInternal Server Error [500].\n" + jqXHR.responseText)
+                } else if (exception === 'parsererror') {
+                    alert("Couldnt get relevant information due to a Problem.\nRequested JSON parse failed.")
+                } else if (exception === 'timeout') {
+                    alert("Couldnt get relevant information due to a Problem.\nTime out Error.")
+                } else if (exception === 'abort') {
+                    alert('Ajax request aborted.')
+                } else {
+                    alert("Couldnt get relevant information due to a Problem.\nUncaught Error.n" + jqXHR.responseText)
+                }
+            }
+
+        })
+        // AJAX END HERE
+    })
+    // END edit information modal
+    
+    // START Update information
+    $(document).on('click', '#update_information', function (e) {
+        e.preventDefault()
+
+        let form = document.getElementById('edit_information')
+        let form_data = new FormData(form)
+        let submit_url = $('#submit_form_href').data('href')
+
+        // AJAX START HERE
+        jQuery.ajax({
+            url: submit_url,
+            method: 'POST',
+            contentType: false,
+            processData: false,
+            data: form_data,
+            timeout: 15000,
+            success: function(data){
+                if(data.success == true)
+                {  
+                    destroy_datatable()
+                    get_list()
+                    $('#edit_information_modal').modal('hide')
+                }
+                else
+                {
+                    console.log("Couldn't update information due to a Problem.")
+                }
+
+            },
+                error: function(jqXHR,exception)
+            {
+                //alert(xhr + "\n" + textStatus + "\n" + thrownError)
+                if (jqXHR.status === 0) {
+                    alert("Couldn't update information due to a Problem.\nConnection Interrupted.\nConnection cancelled or request Timeout")
+                } else if (jqXHR.status == 404) {
+                    alert("Couldn't update information due to a Problem.\nRequested page not found. [404]")
+                } else if (jqXHR.status == 500) {
+                    alert("Couldn't update information due to a Problem.\nInternal Server Error [500].\n" + jqXHR.responseText)
+                } else if (exception === 'parsererror') {
+                    alert("Couldn't update information due to a Problem.\nRequested JSON parse failed.")
+                } else if (exception === 'timeout') {
+                    alert("Couldn't update information due to a Problem.\nTime out Error.")
+                } else if (exception === 'abort') {
+                    alert('Ajax request aborted.')
+                } else {
+                    alert("Couldn't update information due to a Problem.\nUncaught Error.n" + jqXHR.responseText)
+                }
+            }
+
+        })
+        // AJAX END HERE
+    })
+    // END Update information
+
+})
