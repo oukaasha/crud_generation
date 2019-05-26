@@ -1,8 +1,8 @@
 <thead>
     <tr>
         <th>ID</th>
-    {% for column_name in database_table_structure %}
-        <th>{{ database_table_structure[column_name][0] }}</th>
+    {% for column_name, values_array in database_table_structure.items() %}
+        <th>{{ values_array[0] }}</th>
     {% endfor %}
         <th>OPTION</th>
     </tr>

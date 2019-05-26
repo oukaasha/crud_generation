@@ -1,0 +1,51 @@
+/**
+ * Store a newly created resource in storage.
+ *
+ * @param  \Illuminate\Http\Request  $request
+ * @return \Illuminate\Http\Response
+ */
+public function store(Request $request)
+{
+
+    $store = new {{ model_name }}();
+{% for column_name in database_table_structure %}
+    $store->{{ column_name }} = $request->input('{{ column_name }}');
+{% endfor %}
+    $store->save();
+
+    return redirect()->back();
+}
+
+/**
+ * Update the specified resource in storage.
+ *
+ * @param  \Illuminate\Http\Request  $request
+ * @param  int  $id
+ * @return \Illuminate\Http\Response
+ */
+public function update(Request $request, $id)
+{
+
+    $update = {{ model_name }}::findOrFail($id);
+{% for column_name in database_table_structure %}
+    $update->{{ column_name }} = $request->input('{{ column_name }}');
+{% endfor %}
+    $update->save();
+
+    return response()->json( array('success' => true) );
+}
+
+/**
+ * Remove the specified resource from storage.
+ *
+ * @param  \Illuminate\Http\Request  $request
+ * @return \Illuminate\Http\Response
+ */
+public function destroy(Request $request)
+{
+    ${{ database_table_name }}_id = $request->input('delete_entry_id');
+
+    {{ model_name }}::destroy(${{ database_table_name }}_id);
+
+    return redirect()->back();
+}
