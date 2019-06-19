@@ -1,6 +1,6 @@
 {% for column_name, values_array in database_table_structure.items() %}
 {% if loop.index % 2 == 1 %}
-<div class="form-row">
+<div class="form-row p-2 m-1">
 {% endif %}
     <div class="col input_field_sections">
         <h5>{{ values_array[0] }}</h5>
