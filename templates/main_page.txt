@@ -66,6 +66,11 @@
                                             @endif
                                         </select>
                                     {% endif %}
+                                        @if ($errors->has('{{ column_name }}'))
+                                            <span class="invalid-feedback">
+                                                <strong>{{ '{{ ' }}$errors->first('{{ column_name }}'){{ ' }}' }}</strong>
+                                            </span>
+                                        @endif
                                     </div>
 
                                 {% endfor %}
@@ -110,7 +115,7 @@
         </div>
 
         <!-- ::START:: Delete Entry modal -->
-        <form action="{{ '{{' }} action('{{ model_name }}Controller@destroy') {{ '}}' }}" method="POST">
+        <form action="{{ '{{' }} action('{{ model_name }}Controller@destroy') {{ '}}' }}" method="POST" id="delete_entry_form">
         {% raw %}
             {{ csrf_field() }}
 
@@ -130,7 +135,7 @@
                             <input id="delete_entry_id" name="delete_entry_id" type="hidden" value="" />
                         </div>
                         <div class="modal-footer">
-                            <button type="submit" id="delete_entry" class="btn btn-danger">Delete</button>
+                            <button type="submit" class="btn btn-danger">Delete</button>
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                         </div>
                     </div>
@@ -178,9 +183,9 @@
     <script type="text/javascript" src="{{ asset('admin_assets/vendors/datatables/js/dataTables.bootstrap.js') }}"></script>
     <script type="text/javascript" src="{{ asset('admin_assets/vendors/datatables/js/dataTables.buttons.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('admin_assets/vendors/select2/js/select2.min.js') }}"></script>
+    {% endraw %}
 
     <!-- keep this script at the end -->
-    <script type="text/javascript" src="{{ asset('admin_assets/js/custom/provider.js') }}"></script>
+    <script type="text/javascript" src="{{ '{{ ' }} asset('admin_assets/js/custom/{{ database_table_name }}.js') {{ ' }}' }}"></script>
 
-    {% endraw %}
 @endsection

@@ -2,38 +2,82 @@ from jinja2 import Environment, FileSystemLoader
 import os
 import copy
 
+database_table_name = 'listing'
 generate_directory = 'generated'
-database_table_name = 'appointment'
 
 main_file = database_table_name + '.blade.php'
 table_file = database_table_name + '_table_partial.blade.php'
 javascript_file = database_table_name + '.js'
 edit_form_file = database_table_name + '_edit_form_partial.blade.php'
 store_and_update_file = 'store_and_update.php'
-model_name = database_table_name.title()
+model_name_array = database_table_name.split('_')
+model_name = ('').join([name.title() for name in model_name_array])
 
 # format => 'column_name': ['html tag', 'type:if_any']
+# database_table_structure_orig = {
+# 	'appointment_title': ['input', 'text'],
+# 	'appointment_number': ['input', 'text'],
+# 	'appointment_comment': ['textarea'],
+# 	'appointment_comment_internal': ['textarea'],
+# 	'appointment_contact_first_name': ['input', 'text'],
+# 	'appointment_contact_last_name': ['input', 'text'],
+# 	'appointment_contact_email': ['input', 'email'],
+# 	'appointment_contact_mobile': ['input', 'text'],
+# 	'appointment_address_line_1': ['input', 'text'],
+# 	'appointment_address_line_2': ['input', 'text'],
+# 	'appointment_city': ['input', 'text'],
+# 	'appointment_province_code': ['input', 'text'],
+# 	'appointment_country_code': ['input', 'text'],
+# 	'appointment_scheduled_datetime': ['input', 'text'],
+# 	'appointment_type_code': ['select'],
+# 	'appointment_status_code': ['select'],
+# 	'appointment_updated_count': ['input', 'text'],
+# 	'service_id': ['select'],
+# 	'client_id': ['select'],
+# 	'provider_id': ['select']
+# }
+
+# database_table_structure_orig = {
+# 	'service_title': ['input', 'text'],
+# 	'service_number': ['input', 'text'],
+# 	'service_rate_amount': ['input', 'text'],
+# 	'service_minimum_datetime': ['input', 'text'],
+# 	'service_comment': ['textarea'],
+# 	'service_comment_internal': ['textarea'],
+# 	'service_type_code': ['select'],
+# 	'service_status_code': ['select'],
+# 	'service_updated_count': ['input', 'text'],
+# 	'service_category_id': ['select']
+# }
+
+# database_table_structure_orig = {
+# 	'service_category_name': ['input', 'text'],
+# 	'service_category_comment': ['textarea'],
+# 	'service_category_comment_internal': ['textarea'],
+# 	'service_category_type_code': ['select'],
+# 	'service_category_status_code': ['select'],
+# 	'service_category_updated_count': ['input', 'text'],
+# 	'main_category_id': ['select']
+# }
+
 database_table_structure_orig = {
-	'appointment_title': ['input', 'text'],
-	'appointment_number': ['input', 'text'],
-	'appointment_comment': ['textarea'],
-	'appointment_comment_internal': ['textarea'],
-	'appointment_contact_first_name': ['input', 'text'],
-	'appointment_contact_last_name': ['input', 'text'],
-	'appointment_contact_email': ['input', 'email'],
-	'appointment_contact_mobile': ['input', 'text'],
-	'appointment_address_line_1': ['input', 'text'],
-	'appointment_address_line_2': ['input', 'text'],
-	'appointment_city': ['input', 'text'],
-	'appointment_province_code': ['input', 'text'],
-	'appointment_country_code': ['input', 'text'],
-	'appointment_scheduled_datetime': ['input', 'text'],
-	'appointment_type_code': ['select'],
-	'appointment_status_code': ['select'],
-	'appointment_updated_count': ['input', 'text'],
-	'service_id': ['select'],
-	'client_id': ['select'],
-	'provider_id': ['select']
+	'listing_title': ['input', 'text'],
+	'listing_number': ['input', 'text'],
+	'listing_amount_type': ['input', 'text'],
+	'listing_rate_amount': ['input', 'text'],
+	'listing_flat_amount': ['input', 'text'],
+	'listing_minimum_hour': ['input', 'text'],
+	'listing_description': ['textarea'],
+	'listing_comment': ['textarea'],
+	'listing_city_code': ['input', 'text'],
+	'listing_province_code': ['input', 'text'],
+	'listing_country_code': ['input', 'text'],
+	'listing_start_datetime': ['input', 'text'],
+	'listing_end_datetime': ['input', 'text'],
+	'listing_type_code': ['select'],
+	'listing_status_code': ['select'],
+	'listing_updated_count': ['input', 'text'],
+	'provider_id': ['select'],
 }
 
 root = os.path.dirname(os.path.abspath(__file__))
@@ -77,6 +121,7 @@ filename = os.path.join(root, generate_directory, main_file)
 with open(filename, 'w') as fh:
   fh.write(main_page.render(
   	model_name = model_name,
+  	database_table_name = database_table_name,
   	database_table_structure = database_table_structure_for_main,
   ))
 
@@ -84,10 +129,13 @@ with open(filename, 'w') as fh:
 #   creating table
 ##################################
 database_table_structure_for_table = copy.deepcopy(database_table_structure_orig)
+database_table_name_temp_array = database_table_name.split('_')
+database_table_name_temp = ('').join(database_table_name_temp_array)
+database_table_name_array_length = len(database_table_name_temp_array)
 for column_name, values_array in database_table_structure_for_table.items():
 	name_array = column_name.split('_')
-	if name_array[0] == database_table_name:
-		name_array.pop(0)
+	if ('').join(name_array[0:database_table_name_array_length]) == database_table_name_temp:
+		name_array = name_array[database_table_name_array_length:]
 	name = ' '.join(name_array).upper()
 	values_array.insert(0, name)
 

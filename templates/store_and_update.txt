@@ -1,4 +1,18 @@
 /**
+ * Display a listing of the resource.
+ *
+ * @return \Illuminate\Http\Response
+ */
+public function index()
+{
+    ${{ database_table_name }}_list = {{ model_name }}::all();
+
+    $html_response = view('admin.partials.{{ database_table_name }}.{{ database_table_name }}_table_partial', compact('{{ database_table_name }}_list'))->render();
+
+    return response()->json( array('success' => true, 'html_response' => $html_response) );
+}
+
+/**
  * Store a newly created resource in storage.
  *
  * @param  \Illuminate\Http\Request  $request
@@ -47,5 +61,5 @@ public function destroy(Request $request)
 
     {{ model_name }}::destroy(${{ database_table_name }}_id);
 
-    return redirect()->back();
+    return response()->json( array('success' => true) );
 }

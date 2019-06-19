@@ -165,6 +165,16 @@ $(document).ready(function () {
                     alert("Couldn't update information due to a Problem.\nTime out Error.")
                 } else if (exception === 'abort') {
                     alert('Ajax request aborted.')
+                } else if (jqXHR.status == 422) {
+                    let errors_array = Object.entries(jqXHR.responseJSON.errors) // converts javscript object to array => multi-dimensional
+                    $('.invalid-feedback').remove()
+                    errors_array.forEach(element => {
+                        $('input[name="'+ element[0] +'"]').addClass('is-invalid')
+                        let error = '<span class="invalid-feedback">'
+                        error += '<strong>'+ element[1] + '</strong>'
+                        error += '</span>'
+                        $('input[name="'+ element[0] +'"]').parent().append(error)
+                    })
                 } else {
                     alert("Couldn't update information due to a Problem.\nUncaught Error.n" + jqXHR.responseText)
                 }
@@ -174,5 +184,59 @@ $(document).ready(function () {
         // AJAX END HERE
     })
     // END Update information
+
+    // START Delete Entry
+    $(document).on('submit', '#delete_entry_form', function (e) {
+        e.preventDefault()
+
+        let form = document.getElementById('delete_entry_form')
+        let form_data = new FormData(form)
+        let submit_url = $('#delete_entry_form').prop('action')
+
+        // AJAX START HERE
+        jQuery.ajax({
+            url: submit_url,
+            method: 'POST',
+            contentType: false,
+            processData: false,
+            data: form_data,
+            timeout: 15000,
+            success: function(data){
+                if(data.success == true)
+                {  
+                    destroy_datatable()
+                    get_list()
+                    $('#delete-entry-verify').modal('hide')
+                }
+                else
+                {
+                    console.log("Couldn't delete entry due to a Problem.")
+                }
+
+            },
+                error: function(jqXHR,exception)
+            {
+                //alert(xhr + "\n" + textStatus + "\n" + thrownError)
+                if (jqXHR.status === 0) {
+                    alert("Couldn't delete entry due to a Problem.\nConnection Interrupted.\nConnection cancelled or request Timeout")
+                } else if (jqXHR.status == 404) {
+                    alert("Couldn't delete entry due to a Problem.\nRequested page not found. [404]")
+                } else if (jqXHR.status == 500) {
+                    alert("Couldn't delete entry due to a Problem.\nInternal Server Error [500].\n" + jqXHR.responseText)
+                } else if (exception === 'parsererror') {
+                    alert("Couldn't delete entry due to a Problem.\nRequested JSON parse failed.")
+                } else if (exception === 'timeout') {
+                    alert("Couldn't delete entry due to a Problem.\nTime out Error.")
+                } else if (exception === 'abort') {
+                    alert('Ajax request aborted.')
+                } else {
+                    alert("Couldn't delete entry due to a Problem.\nUncaught Error.n" + jqXHR.responseText)
+                }
+            }
+
+        })
+        // AJAX END HERE
+    })
+    // END Delete Entry
 
 })
