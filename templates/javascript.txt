@@ -167,13 +167,13 @@ $(document).ready(function () {
                     alert('Ajax request aborted.')
                 } else if (jqXHR.status == 422) {
                     let errors_array = Object.entries(jqXHR.responseJSON.errors) // converts javscript object to array => multi-dimensional
-                    $('.invalid-feedback').remove()
+                    $('#edit_information_modal .invalid-feedback').remove()
                     errors_array.forEach(element => {
                         $('input[name="'+ element[0] +'"]').addClass('is-invalid')
                         let error = '<span class="invalid-feedback">'
                         error += '<strong>'+ element[1] + '</strong>'
                         error += '</span>'
-                        $('input[name="'+ element[0] +'"]').parent().append(error)
+                        $('#edit_information_modal input[name="'+ element[0] +'"]').parent().append(error)
                     })
                 } else {
                     alert("Couldn't update information due to a Problem.\nUncaught Error.n" + jqXHR.responseText)
