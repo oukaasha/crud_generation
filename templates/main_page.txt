@@ -12,6 +12,11 @@
     <link type="text/css" rel="stylesheet" href="{{ asset('admin_assets/vendors/select2/css/select2.min.css') }}" />
     <link type="text/css" rel="stylesheet" href="{{ asset('admin_assets/css/pages/tables.css') }}" />
 
+    <style>
+        .invalid-feedback {
+            display: unset !important;
+        }
+    </style>
     {% endraw %}
 @endsection
 
